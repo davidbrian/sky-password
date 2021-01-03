@@ -8,7 +8,6 @@ const Accounts = () => {
   useEffect(() => {
     const user = app.auth().currentUser;
     const uid = user.uid;
-    let socialList = [...socials];
     const observer = app
       .firestore()
       .collection("social")
@@ -17,28 +16,29 @@ const Accounts = () => {
       .onSnapshot((querySnapshot) => {
         querySnapshot.docChanges().forEach((change) => {
           if (change.type === "added") {
-            socialList = [
+            setSocials((socialList) => [
               ...socialList,
               { id: change.doc.id, ...change.doc.data() },
-            ];
+            ]);
           }
           if (change.type === "modified") {
-            socialList = socialList.map((social) => {
-              if (social.id === change.doc.id) {
-                social = { id: change.doc.id, ...change.doc.data() };
-              }
-              return social;
+            setSocials((socialList) => {
+              return socialList.map((social) => {
+                if (social.id === change.doc.id) {
+                  social = { id: change.doc.id, ...change.doc.data() };
+                }
+                return social;
+              });
             });
           }
           //   if (change.type === "removed") {
           //     console.log("Removed city: ", change.doc.data());
           //   }
         });
-        setSocials(socialList);
       });
 
     return observer;
-  }, []);
+  }, [setSocials]);
 
   return (
     <div className="grid">
