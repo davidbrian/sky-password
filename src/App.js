@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
+import SignUp from "./pages/SignUp";
+import { AuthProvider } from "./Auth";
+import PrivateRoute from "./PrivateRoute";
+import { ToastContainer } from "react-toastify";
 
-function App() {
+import "react-toastify/dist/ReactToastify.css";
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthProvider>
+      <Router>
+        <Switch>
+          <PrivateRoute exact path="/" component={Dashboard} />
+          <Route exact path="/log-in" component={Login} />
+          <Route exact path="/sign-up" component={SignUp} />
+          <Route path="/*" component={NotFound} />
+        </Switch>
+      </Router>
+      <ToastContainer />
+    </AuthProvider>
   );
-}
+};
 
 export default App;

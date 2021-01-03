@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/utilities.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link href="font-awesome/fontawesome.css" rel="stylesheet" />
+    <link href="font-awesome/brands.css" rel="stylesheet" />
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="container flex">
+            <div class="logo">Skypass</div>
+            <nav>
+                <ul>
+                    <li><a href="#">My account</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <section class="social">
+        <div class="container">
+            <div class="social-search flex">
+                <input type="text" placeholder="Search your social account..."
+                    aria-label="Search your social account...">
+                <button class="btn">add account</button>
+            </div>
+            <div class="grid">
+                <div class="card">
+                    <div class="social-title">
+                        instagram
+                    </div>
+                    <div class="social-actions flex">
+                        <button class="btn">copy</button>
+                        <button class="btn btn-secondary">update</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="social-title">
+                        facebook
+                    </div>
+                    <div class="social-actions flex">
+                        <button class="btn">copy</button>
+                        <button class="btn btn-secondary">update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><span class="close">&times;</span></div>
+            <div class="form-control">
+                <label for="account-title">Account title</label>
+                <input type="text" id="account-title">
+            </div>
+            <div class="form-control">
+                <label for="new-password">New password</label>
+                <input type="text" id="new-password" disabled>
+                <input type="checkbox" id="is-account-updated">
+                <label for="is-account-updated" class="is-account-updated"><small>I've updated my account password using
+                        this password.</small></label>
+            </div>
+            <div class="flex new-password-actions">
+                <button class="btn">generate</button>
+                <button class="btn btn-secondary">copy</button>
+                <button class="btn btn-warning">save</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        
+        let modalElement = document.querySelector('.modal');
+
+        let modalCloseBtn = document.querySelector('.modal .close');
+        modalCloseBtn.onclick = function () {
+            modalElement.style.display = 'none';
+        }
+        let addAccountBtn = document.querySelector('.social-search .btn');
+        addAccountBtn.onclick = function () {
+            this.blur();
+            modalElement.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

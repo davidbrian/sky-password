@@ -55,6 +55,7 @@ body {
 
 /* Login Section */
 .login-form {
+  height: 400px;
   width: 350px;
   padding: 40px;
 }
@@ -89,7 +90,8 @@ body {
 .btn-login {
   text-transform: uppercase;
   display: block;
-  margin: 0 auto 5px auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .form-control > label {
@@ -107,22 +109,19 @@ body {
   display: flex;
 }
 
-.navbar button {
-  background: none;
-  border: none;
-  cursor: pointer;
+.navbar a {
   color: #fff;
   padding: 10px;
   margin: 0 5px;
   border-bottom: 2px rgba(0, 0, 0, 0.3) solid;
 }
 
-.navbar button:hover {
+.navbar a:hover {
   background-color: rgba(0, 0, 0, 0.3);
   border-bottom: 2px transparent solid;
 }
 
-.navbar button.active {
+.navbar a.active {
   color: var(--secondary-color);
 }
 
@@ -190,16 +189,16 @@ body {
   text-transform: none;
 }
 
-.form-control input[type="text"],
-.form-control input[type="password"] {
+input#new-password,
+input#account-title {
   width: 100%;
   padding: 8px;
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 10px;
 }
 
-.form-control input[type="text"]:focus,
-.form-control input[type="password"]:focus {
+input#new-password:focus,
+input#account-title:focus {
   outline: none;
 }
 
@@ -208,25 +207,16 @@ body {
   flex-wrap: wrap;
 }
 
-.new-password-actions > .btn {
+.new-password-actions > .btn{
   margin: 5px 0;
-}
-
-.auth-form-text {
-  padding: 0;
-  margin: 0 0 10px 0;
-}
-
-.auth-form-text a {
-  color: #25c1c1;
 }
 
 /* Tablets and under */
 @media (max-width: 768px) {
   .social-search .btn {
-    margin: 10px 0;
+    margin:10px 0;
   }
-  .social-search.flex {
+  .social-search.flex{
     flex-direction: column;
   }
 
