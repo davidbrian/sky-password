@@ -38,7 +38,7 @@ const Decrypt = ({ setIsModalOpen, id, keyCode }) => {
   };
   return (
     <form onSubmit={decryptKeyCode}>
-      <h2>Please enter the decryption key:</h2>
+      <h2>Please enter the decryption key</h2>
       <div className="form-control">
         <label htmlFor={`decryption-key${id}`}>Decryption Key</label>
         <input

@@ -151,13 +151,18 @@ const Create = ({ setIsModalOpen }) => {
       </div>
       <div className="form-control">
         <label htmlFor="new-password">New password</label>
-        <input type="text" id="new-password" value={socialPassword} disabled />
+        <input
+          type="password"
+          id="new-password"
+          value={socialPassword}
+          disabled
+        />
         <p className="error-msg">{socialPasswordError}</p>
       </div>
       <div className="form-control">
         <label htmlFor="encryption-key">Encryption Key</label>
         <input
-          type="text"
+          type="password"
           id="encryption-key"
           value={encryptionKey}
           onChange={(e) => {

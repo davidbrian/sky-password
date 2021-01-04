@@ -13,8 +13,9 @@ const reducer = (socials, action) => {
         return social;
       });
     case "removed":
-      return socials;
+      return socials.filter((social) => social.id !== action.payload.id);
     default:
+      return socials;
   }
 };
 

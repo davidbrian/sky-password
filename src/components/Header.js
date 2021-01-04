@@ -9,9 +9,6 @@ export default function Header() {
         <nav>
           <ul>
             <li>
-              <button>My account</button>
-            </li>
-            <li>
               <button onClick={() => app.auth().signOut()}>Sign out</button>
             </li>
           </ul>

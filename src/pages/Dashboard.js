@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import Accounts from "../components/Social/Accounts";
 import SearchBar from "../components/Social/SearchBar";
 import Header from "../components/Header";
+import SearchKeyProvider from "../Context/SearchKeyProvider";
 
 const Dashboard = () => {
   return (
@@ -9,8 +10,10 @@ const Dashboard = () => {
       <Header />
       <section className="social">
         <div className="container">
-          <SearchBar />
-          <Accounts />
+          <SearchKeyProvider>
+            <SearchBar />
+            <Accounts />
+          </SearchKeyProvider>
         </div>
       </section>
     </>

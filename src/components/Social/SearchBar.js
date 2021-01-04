@@ -1,9 +1,15 @@
 import React, { useState } from "react";
 import Create from "./Create";
 import Modal from "../Modal";
+import {
+  useSearchedKey,
+  useUpdateSearchedKey,
+} from "../../Context/SearchKeyProvider";
 
 const SearchBar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const setSearchedKey = useUpdateSearchedKey();
+  const searchedKey = useSearchedKey();
 
   return (
     <>
@@ -12,6 +18,10 @@ const SearchBar = () => {
           type="text"
           placeholder="Search your social account..."
           aria-label="Search your social account..."
+          value={searchedKey}
+          onChange={(e) => {
+            setSearchedKey(e.target.value);
+          }}
         />
         <button className="btn" onClick={() => setIsModalOpen(true)}>
           add account

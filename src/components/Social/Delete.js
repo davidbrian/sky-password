@@ -1,33 +1,45 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 import aes from "crypto-js/aes";
 import enc from "crypto-js/enc-utf8";
+import app from "../../fire";
+import { toast } from "react-toastify";
 
 const Delete = ({ setIsModalOpen, keyCode, id }) => {
-  const [decryptionKeyError, setDecryptionKeyError] = useState("");
   const [decryptionKey, setDecryptionKey] = useState("");
+  const [decryptionKeyError, setDecryptionKeyError] = useState("");
 
-  const decryptKeyCode = (e) => {
+  const validateForm = async (e) => {
     e.preventDefault();
     setDecryptionKeyError("");
 
     if (decryptionKey === "") {
       setDecryptionKeyError("Please enter the decryption key");
-      return;
+      return false;
     }
     let decryptedKey = aes.decrypt(keyCode, decryptionKey).toString(enc);
     if (decryptedKey === "") {
-      toast.error("Decryption Key was incorrect!", {
-        position: "top-center",
-        hideProgressBar: true,
-      });
-      return;
+      setDecryptionKeyError("Decryption Key was incorrect!");
+      return false;
     }
-    setDecryptionKey("");
+
+    let user = app.auth().currentUser;
+    let uid = user.uid;
+
+    await app
+      .firestore()
+      .collection("social")
+      .doc(uid)
+      .collection("userSocial")
+      .doc(id)
+      .delete();
+    toast.error("✔️ Account removed!", {
+      position: "top-center",
+      hideProgressBar: true,
+    });
   };
 
   return (
-    <>
+    <form onSubmit={validateForm}>
       <h2>Are you sure you want to delete this account?</h2>
       <div className="form-control">
         <label htmlFor={`decryption-key${id}`}>Decryption Key</label>
@@ -40,13 +52,13 @@ const Delete = ({ setIsModalOpen, keyCode, id }) => {
         <p className="error-msg">{decryptionKeyError}</p>
       </div>
       <div className="form-control">
-        <button className="btn btn-warning" type="button">
+        <button className="btn btn-warning" type="submit">
           Yes
         </button>
         &nbsp;
         <button
           className="btn"
-          type="submit"
+          type="button"
           onClick={() => {
             setIsModalOpen(false);
           }}
@@ -54,7 +66,7 @@ const Delete = ({ setIsModalOpen, keyCode, id }) => {
           No
         </button>
       </div>
-    </>
+    </form>
   );
 };
 
