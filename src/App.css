@@ -158,6 +158,12 @@ body {
   text-align: center;
   font-weight: bold;
 }
+.social .card-close:hover {
+  cursor: pointer;
+}
+.social .card-close {
+  justify-content: flex-end;
+}
 
 .social .social-actions {
   margin-top: 25px;

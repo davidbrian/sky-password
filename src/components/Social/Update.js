@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import aes from "crypto-js/aes";
+import enc from "crypto-js/enc-utf8";
+import { toast } from "react-toastify";
+import firebase from "firebase";
 import app from "../../fire";
 import PasswordGenerator from "./PasswordGenerator";
-import firebase from "firebase";
-import aes from "crypto-js/aes";
-import { toast } from "react-toastify";
-import useFetchSocial from "./useFetchSocial";
 
-const Create = ({ setIsModalOpen }) => {
-  const [accountTitle, setAccountTitle] = useState("");
-  const [accountTitleError, setAccountTitleError] = useState("");
-
-  const [userName, setUserName] = useState("");
+const Update = ({ setIsModalOpen, keyCode, id, userName }) => {
+  const [updatedUserName, setUpdatedUserName] = useState("");
   const [userNameError, setUserNameError] = useState("");
+
+  const [oldEncryptionKey, setOldEncryptionKey] = useState("");
+  const [OldEncryptionKeyError, setOldEncryptionKeyError] = useState("");
 
   const [socialPassword, setSocialPassword] = useState("");
   const [socialPasswordError, setSocialPasswordError] = useState("");
@@ -23,25 +23,55 @@ const Create = ({ setIsModalOpen }) => {
   const [isAccountUpdatedError, setIsAccountUpdatedError] = useState("");
 
   const [generateIsOngoing, setGenerateIsOnGoing] = useState(false);
+  useEffect(() => {
+    setUpdatedUserName(userName);
+  }, [userName]);
 
-  const socials = useFetchSocial();
+  const updateSocial = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) {
+      return false;
+    }
+    let user = app.auth().currentUser;
+    let uid = user.uid;
+    let encryptedPassword = aes.encrypt(socialPassword, encryptionKey);
+
+    await app
+      .firestore()
+      .collection("social")
+      .doc(uid)
+      .collection("userSocial")
+      .doc(id)
+      .set({
+        userName: updatedUserName,
+        keyCode: encryptedPassword.toString(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+      .catch((error) => {
+        console.log("Storing Error", error);
+        return false;
+      });
+
+    toast.dark("🏆 Social Account Updated!", {
+      position: "top-center",
+      hideProgressBar: true,
+    });
+    setIsModalOpen(false);
+  };
 
   const validateForm = () => {
     let formErrors = 0;
-    setAccountTitleError("");
     setUserNameError("");
+    setOldEncryptionKeyError("");
     setSocialPasswordError("");
     setEncryptionKeyError("");
     setIsAccountUpdatedError("");
-    let isExistingAccountTitle = socials.some((social) => {
-      return social.id === accountTitle;
-    });
-    if (userName === "") {
+    if (updatedUserName === "") {
       setUserNameError("Please put the account username.");
       formErrors++;
     }
-    if (accountTitle === "") {
-      setAccountTitleError("Please put the account title.");
+    if (oldEncryptionKey === "") {
+      setOldEncryptionKeyError("Enter your old encryption key.");
       formErrors++;
     }
     if (socialPassword === "") {
@@ -58,54 +88,14 @@ const Create = ({ setIsModalOpen }) => {
       );
       formErrors++;
     }
-    if (isExistingAccountTitle) {
-      setAccountTitleError("Account title already exists!");
-      formErrors++;
+    let decryptedKey = aes.decrypt(keyCode, oldEncryptionKey).toString(enc);
+    if (decryptedKey === "" && oldEncryptionKey !== "") {
+      setOldEncryptionKeyError("Old Encryption Key was incorrect!");
     }
-
     if (formErrors > 0) {
       return false;
     }
     return true;
-  };
-  const updateTitle = (title) => {
-    setAccountTitle(
-      title
-        .split(" ")
-        .map((t) => t.substring(0, 1).toUpperCase() + t.substring(1))
-        .join(" ")
-    );
-  };
-  const saveSocial = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) {
-      return false;
-    }
-    let user = app.auth().currentUser;
-    let uid = user.uid;
-    let encryptedPassword = aes.encrypt(socialPassword, encryptionKey);
-
-    await app
-      .firestore()
-      .collection("social")
-      .doc(uid)
-      .collection("userSocial")
-      .doc(accountTitle)
-      .set({
-        userName,
-        keyCode: encryptedPassword.toString(),
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      })
-      .catch((error) => {
-        console.log("Storing Error", error);
-        return false;
-      });
-
-    toast.dark("🏆 Social Account Created!", {
-      position: "top-center",
-      hideProgressBar: true,
-    });
-    setIsModalOpen(false);
   };
 
   const copyPassword = () => {
@@ -127,27 +117,33 @@ const Create = ({ setIsModalOpen }) => {
       setGenerateIsOnGoing={setGenerateIsOnGoing}
     />
   ) : (
-    <form onSubmit={saveSocial}>
-      <h2>Create Social Account</h2>
+    <form onSubmit={updateSocial}>
+      <h2>Update Social Account</h2>
       <div className="form-control">
         <label htmlFor="account-title">Account title</label>
-        <input
-          type="text"
-          id="account-title"
-          value={accountTitle}
-          onChange={(e) => updateTitle(e.target.value)}
-        />
-        <p className="error-msg">{accountTitleError}</p>
+        <input type="text" id="account-title" value={id} disabled />
       </div>
       <div className="form-control">
         <label htmlFor="account-title">Username</label>
         <input
           type="text"
           id="username"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
+          value={updatedUserName}
+          onChange={(e) => setUpdatedUserName(e.target.value)}
         />
         <p className="error-msg">{userNameError}</p>
+      </div>
+      <div className="form-control">
+        <label htmlFor="old-encryption-key">Old Encryption Key</label>
+        <input
+          type="text"
+          id="old-encryption-key"
+          value={oldEncryptionKey}
+          onChange={(e) => {
+            setOldEncryptionKey(e.target.value);
+          }}
+        />
+        <p className="error-msg">{OldEncryptionKeyError}</p>
       </div>
       <div className="form-control">
         <label htmlFor="new-password">New password</label>
@@ -155,7 +151,7 @@ const Create = ({ setIsModalOpen }) => {
         <p className="error-msg">{socialPasswordError}</p>
       </div>
       <div className="form-control">
-        <label htmlFor="encryption-key">Encryption Key</label>
+        <label htmlFor="encryption-key">New Encryption Key</label>
         <input
           type="text"
           id="encryption-key"
@@ -202,11 +198,11 @@ const Create = ({ setIsModalOpen }) => {
           copy password
         </button>
         <button className="btn btn-warning" type="submit">
-          save
+          update
         </button>
       </div>
     </form>
   );
 };
 
-export default Create;
+export default Update;

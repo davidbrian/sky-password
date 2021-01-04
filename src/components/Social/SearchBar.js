@@ -17,9 +17,11 @@ const SearchBar = () => {
           add account
         </button>
       </div>
-      <Modal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
-        <Create setIsModalOpen={setIsModalOpen} />
-      </Modal>
+      {isModalOpen && (
+        <Modal setIsModalOpen={setIsModalOpen}>
+          <Create setIsModalOpen={setIsModalOpen} />
+        </Modal>
+      )}
     </>
   );
 };

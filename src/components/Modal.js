@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
-const Modal = ({ children, isModalOpen, setIsModalOpen }) => {
-  const getModalStatus = () => {
-    return isModalOpen ? { display: "block" } : { display: "none" };
-  };
+const Modal = ({ children, setIsModalOpen }) => {
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setIsModalOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [wrapperRef, setIsModalOpen]);
+
   return (
-    <div className="modal" style={getModalStatus()}>
-      <div className="modal-content">
+    <div className="modal">
+      <div className="modal-content" ref={wrapperRef}>
         <div className="modal-header">
           <span className="close" onClick={() => setIsModalOpen(false)}>
             &times;

@@ -1,45 +1,9 @@
-import React, { useState, useEffect } from "react";
-import app from "../../fire";
+import React from "react";
 import Card from "./Card";
+import useFetchSocial from "./useFetchSocial";
 
 const Accounts = () => {
-  const [socials, setSocials] = useState([]);
-
-  useEffect(() => {
-    const user = app.auth().currentUser;
-    const uid = user.uid;
-    const observer = app
-      .firestore()
-      .collection("social")
-      .doc(uid)
-      .collection("userSocial")
-      .onSnapshot((querySnapshot) => {
-        querySnapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            setSocials((socialList) => [
-              ...socialList,
-              { id: change.doc.id, ...change.doc.data() },
-            ]);
-          }
-          if (change.type === "modified") {
-            setSocials((socialList) => {
-              return socialList.map((social) => {
-                if (social.id === change.doc.id) {
-                  social = { id: change.doc.id, ...change.doc.data() };
-                }
-                return social;
-              });
-            });
-          }
-          //   if (change.type === "removed") {
-          //     console.log("Removed city: ", change.doc.data());
-          //   }
-        });
-      });
-
-    return observer;
-  }, [setSocials]);
-
+  const socials = useFetchSocial();
   return (
     <div className="grid">
       {socials.map((social) => {

@@ -1,79 +1,76 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
-import aes from "crypto-js/aes";
-import enc from "crypto-js/enc-utf8";
 import Modal from "../Modal";
+import Decrypt from "./Decrypt";
+import Delete from "./Delete";
+import Update from "./Update";
 
 const Card = ({ id, keyCode, userName }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [decryptionKey, setDecryptionKey] = useState("");
-  const [decryptionKeyError, setDecryptionKeyError] = useState("");
-
-  const copyPassword = (decryptedKey) => {
-    navigator.clipboard.writeText(decryptedKey);
-    toast.dark("✔️ Password copied!", {
-      position: "top-center",
-      hideProgressBar: true,
-    });
-    setIsModalOpen(false);
-  };
-
-  const decryptKeyCode = (e) => {
-    e.preventDefault();
-    setDecryptionKeyError("");
-
-    if (decryptionKey === "") {
-      setDecryptionKeyError("Please enter the decryption key");
-      return;
-    }
-    let decryptedKey = aes.decrypt(keyCode, decryptionKey).toString(enc);
-    if (decryptedKey === "") {
-      toast.error("Failed! Something went wrong...", {
-        position: "top-center",
-        hideProgressBar: true,
-      });
-      return;
-    }
-    setDecryptionKey("");
-
-    copyPassword(decryptedKey);
-  };
+  const [isDecryptModalOpen, setIsDecryptModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   return (
     <>
       <div key={id} className="card">
+        <div className="flex card-close">
+          <span
+            className="close"
+            onClick={() => {
+              setIsDeleteModalOpen(true);
+            }}
+          >
+            &times;
+          </span>
+        </div>
         <div className="social-title">{id}</div>
         <small>{userName}</small>
         <div className="social-actions flex">
           <button
             className="btn"
             onClick={() => {
-              setIsModalOpen(true);
+              setIsDecryptModalOpen(true);
             }}
           >
             copy
           </button>
-          <button className="btn btn-secondary">update</button>
+          <button
+            className="btn btn-secondary"
+            onClick={() => {
+              setIsUpdateModalOpen(true);
+            }}
+          >
+            update
+          </button>
         </div>
       </div>
-      <Modal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
-        <form onSubmit={decryptKeyCode}>
-          <h2>Please enter the decryption key:</h2>
-          <div className="form-control">
-            <label htmlFor={`decryption-key${id}`}>Decryption Key</label>
-            <input
-              type="password"
-              id={`decryption-key${id}`}
-              value={decryptionKey}
-              onChange={(e) => setDecryptionKey(e.target.value)}
-            />
-            <p className="error-msg">{decryptionKeyError}</p>
-          </div>
-          <button className="btn" type="submit">
-            Confirm
-          </button>
-        </form>
-      </Modal>
+      {isDecryptModalOpen && (
+        <Modal setIsModalOpen={setIsDecryptModalOpen}>
+          <Decrypt
+            setIsModalOpen={setIsDecryptModalOpen}
+            keyCode={keyCode}
+            id={id}
+          />
+        </Modal>
+      )}
+      {isUpdateModalOpen && (
+        <Modal setIsModalOpen={setIsUpdateModalOpen}>
+          <Update
+            setIsModalOpen={setIsUpdateModalOpen}
+            keyCode={keyCode}
+            id={id}
+            userName={userName}
+          />
+        </Modal>
+      )}
+      {isDeleteModalOpen && (
+        <Modal setIsModalOpen={setIsDeleteModalOpen}>
+          <Delete
+            setIsModalOpen={setIsDeleteModalOpen}
+            id={id}
+            keyCode={keyCode}
+          />
+        </Modal>
+      )}
     </>
   );
 };
