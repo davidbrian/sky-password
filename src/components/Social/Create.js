@@ -19,6 +19,9 @@ const Create = ({ setIsModalOpen }) => {
   const [encryptionKey, setEncryptionKey] = useState("");
   const [encryptionKeyError, setEncryptionKeyError] = useState("");
 
+  const [reEncryptionKey, setReEncryptionKey] = useState("");
+  const [reEncryptionKeyError, setReEncryptionKeyError] = useState("");
+
   const [isAccountUpdated, setIsAccountUpdated] = useState(false);
   const [isAccountUpdatedError, setIsAccountUpdatedError] = useState("");
 
@@ -32,6 +35,7 @@ const Create = ({ setIsModalOpen }) => {
     setUserNameError("");
     setSocialPasswordError("");
     setEncryptionKeyError("");
+    setReEncryptionKeyError("");
     setIsAccountUpdatedError("");
     let isExistingAccountTitle = socials.some((social) => {
       return social.id === accountTitle;
@@ -50,6 +54,14 @@ const Create = ({ setIsModalOpen }) => {
     }
     if (encryptionKey === "") {
       setEncryptionKeyError("Please enter the encryption key.");
+      formErrors++;
+    }
+    if (reEncryptionKey === "") {
+      setReEncryptionKeyError("Please enter the re-encryption key.");
+      formErrors++;
+    }
+    if (reEncryptionKey !== encryptionKey) {
+      setReEncryptionKeyError("Encryption key did not match!");
       formErrors++;
     }
     if (!isAccountUpdated) {
@@ -170,6 +182,18 @@ const Create = ({ setIsModalOpen }) => {
           }}
         />
         <p className="error-msg">{encryptionKeyError}</p>
+      </div>
+      <div className="form-control">
+        <label htmlFor="re-encryption-key">Re-Encryption Key</label>
+        <input
+          type="password"
+          id="re-encryption-key"
+          value={reEncryptionKey}
+          onChange={(e) => {
+            setReEncryptionKey(e.target.value);
+          }}
+        />
+        <p className="error-msg">{reEncryptionKeyError}</p>
       </div>
       <div className="form-control">
         <input

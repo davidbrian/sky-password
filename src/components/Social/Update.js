@@ -88,7 +88,12 @@ const Update = ({ setIsModalOpen, keyCode, id, userName }) => {
       );
       formErrors++;
     }
-    let decryptedKey = aes.decrypt(keyCode, oldEncryptionKey).toString(enc);
+    let decryptedKey = "";
+    try {
+      decryptedKey = aes.decrypt(keyCode, oldEncryptionKey).toString(enc);
+    } catch (e) {
+      console.log(e);
+    }
     if (decryptedKey === "" && oldEncryptionKey !== "") {
       setOldEncryptionKeyError("Old Encryption Key was incorrect!");
     }

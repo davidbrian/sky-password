@@ -24,7 +24,13 @@ const Decrypt = ({ setIsModalOpen, id, keyCode }) => {
       setDecryptionKeyError("Please enter the decryption key");
       return;
     }
-    let decryptedKey = aes.decrypt(keyCode, decryptionKey).toString(enc);
+
+    let decryptedKey = "";
+    try {
+      decryptedKey = aes.decrypt(keyCode, decryptionKey).toString(enc);
+    } catch (e) {
+      console.log(e);
+    }
     if (decryptedKey === "") {
       toast.error("Decryption Key was incorrect!", {
         position: "top-center",

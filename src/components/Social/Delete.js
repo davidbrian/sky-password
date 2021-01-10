@@ -16,7 +16,12 @@ const Delete = ({ setIsModalOpen, keyCode, id }) => {
       setDecryptionKeyError("Please enter the decryption key");
       return false;
     }
-    let decryptedKey = aes.decrypt(keyCode, decryptionKey).toString(enc);
+    let decryptedKey = "";
+    try {
+      decryptedKey = aes.decrypt(keyCode, decryptionKey).toString(enc);
+    } catch (e) {
+      console.log(e);
+    }
     if (decryptedKey === "") {
       setDecryptionKeyError("Decryption Key was incorrect!");
       return false;
